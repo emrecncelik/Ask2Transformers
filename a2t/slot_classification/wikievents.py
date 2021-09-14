@@ -115,16 +115,14 @@ class WikiEventsArgumentDataset(torch.utils.data.Dataset):
     def _load(self):
         self.instances = []
         with open(self.data_path) as data_f:
-            for i, data_line in tqdm(enumerate(data_f)):
+            for data_line in tqdm(data_f):
                 instance = json.loads(data_line)
                 entities = {entity["id"]: entity for entity in instance["entity_mentions"]}
 
                 tokens = [token for sentence in instance["sentences"] for token in sentence[0]]
 
                 if self.max_sentence_distance is not None:
-                    all_sub_sentences = [
-                        list(sent_tokenize(text, tokens[0][1])) for tokens, text in instance["sentences"]
-                    ]
+                    all_sub_sentences = [list(sent_tokenize(text, tokens[0][1])) for tokens, text in instance["sentences"]]
 
                 for event in instance["event_mentions"]:
 
@@ -235,9 +233,7 @@ class WikiEventsArgumentDataset(torch.utils.data.Dataset):
                                 raise ValueError()
 
                             label = (
-                                label
-                                if abs(trigger_sub_sentence - arg_sub_sentence) <= self.max_sentence_distance
-                                else "OOR"
+                                label if abs(trigger_sub_sentence - arg_sub_sentence) <= self.max_sentence_distance else "OOR"
                             )
 
                         self.instances.append(

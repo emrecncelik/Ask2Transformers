@@ -52,9 +52,7 @@ class NSPTopicClassifier(Classifier):
 
         batch, outputs = [], []
         for i, context in tqdm(enumerate(contexts), total=len(contexts)):
-            sentences = [
-                f'{context} {self.tokenizer.sep_token} {self.query_phrase} "{topic}".' for topic in self.labels
-            ]
+            sentences = [f'{context} {self.tokenizer.sep_token} {self.query_phrase} "{topic}".' for topic in self.labels]
             batch.extend(sentences)
 
             if (i + 1) % batch_size == 0:
@@ -74,10 +72,7 @@ class NSPTopicClassifier(Classifier):
 if __name__ == "__main__":
 
     if len(sys.argv) < 2:
-        print(
-            "Usage:\tpython3 get_topics.py topics.txt input_file.txt\n\tpython3 get_topics.py topics.txt < "
-            "input_file.txt"
-        )
+        print("Usage:\tpython3 get_topics.py topics.txt input_file.txt\n\tpython3 get_topics.py topics.txt < " "input_file.txt")
         exit(1)
 
     with open(sys.argv[1], "rt") as f:

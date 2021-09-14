@@ -170,9 +170,7 @@ class NLITopicClassifierWithMappingHead(_NLITopicClassifier):
 
     def __call__(self, contexts, batch_size=1):
         outputs = super().__call__(contexts, batch_size)
-        outputs = np.hstack(
-            [np.max(outputs[:, self.mapping[topic]], axis=-1, keepdims=True) for topic in self.target_topics]
-        )
+        outputs = np.hstack([np.max(outputs[:, self.mapping[topic]], axis=-1, keepdims=True) for topic in self.target_topics])
         outputs = np_softmax(outputs)
 
         return outputs
@@ -181,10 +179,7 @@ class NLITopicClassifierWithMappingHead(_NLITopicClassifier):
 if __name__ == "__main__":
 
     if len(sys.argv) < 2:
-        print(
-            "Usage:\tpython3 get_topics.py topics.txt input_file.txt\n\tpython3 get_topics.py topics.txt < "
-            "input_file.txt"
-        )
+        print("Usage:\tpython3 get_topics.py topics.txt input_file.txt\n\tpython3 get_topics.py topics.txt < " "input_file.txt")
         exit(1)
 
     with open(sys.argv[1], "rt") as f:

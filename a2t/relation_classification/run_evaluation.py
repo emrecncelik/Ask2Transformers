@@ -97,9 +97,7 @@ for configuration in config:
         output_ = apply_threshold(output, threshold=optimal_threshold)
     else:
         output_ = output.argmax(-1)
-    pre, rec, f1, _ = precision_recall_fscore_support(
-        labels, output_, average="micro", labels=list(range(1, n_labels))
-    )
+    pre, rec, f1, _ = precision_recall_fscore_support(labels, output_, average="micro", labels=list(range(1, n_labels)))
 
     np.save(f"experiments/{configuration['name']}/output.npy", output)
     np.save(f"experiments/{configuration['name']}/labels.npy", labels)

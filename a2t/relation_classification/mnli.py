@@ -335,9 +335,7 @@ class GenerativeNLIRelationClassifier(_GenerativeNLIRelationClassifier, NLIRelat
     pass
 
 
-class GenerativeNLIRelationClassifierWithMappingHead(
-    _GenerativeNLIRelationClassifier, NLIRelationClassifierWithMappingHead
-):
+class GenerativeNLIRelationClassifierWithMappingHead(_GenerativeNLIRelationClassifier, NLIRelationClassifierWithMappingHead):
     pass
 
 

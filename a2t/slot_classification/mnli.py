@@ -55,7 +55,7 @@ class NLISlotClassifier(_NLISlotClassifier):
         pretrained_model: str = "roberta-large-mnli",
         **kwargs,
     ):
-        super(NLITopicClassifier, self).__init__(labels, *args, pretrained_model=pretrained_model, **kwargs)
+        super(NLISlotClassifier, self).__init__(labels, *args, pretrained_model=pretrained_model, **kwargs)
 
     def __call__(
         self,

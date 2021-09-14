@@ -79,9 +79,7 @@ if __name__ == "__main__":
                     for entity in doc["entity_mentions"]:
                         mention_id = entity["id"]
                         ent_id = "-".join(mention_id.split("-")[:-1])
-                        coref_mapping[doc_id][
-                            (entity["start"], entity["end"] - 1)
-                        ] = ent_id  # all indexes are inclusive
+                        coref_mapping[doc_id][(entity["start"], entity["end"] - 1)] = ent_id  # all indexes are inclusive
 
     pred_arg_num = 0
     gold_arg_num = 0
@@ -155,9 +153,7 @@ if __name__ == "__main__":
                 for pred_arg in predicted_set:
                     arg_start, arg_end, event_type, role = pred_arg
                     gold_idn = {
-                        item
-                        for item in gold_set
-                        if item[0] == arg_start and item[1] == arg_end and item[2] == event_type
+                        item for item in gold_set if item[0] == arg_start and item[1] == arg_end and item[2] == event_type
                     }
                     if gold_idn:
                         arg_idn_num += 1
@@ -170,9 +166,7 @@ if __name__ == "__main__":
                         if span in coref_mapping[doc_id]:
                             canonical_id = coref_mapping[doc_id][span]
                             gold_idn_coref = {
-                                item
-                                for item in gold_canonical_set
-                                if item[0] == canonical_id and item[1] == event_type
+                                item for item in gold_canonical_set if item[0] == canonical_id and item[1] == event_type
                             }
                             if gold_idn_coref:
                                 arg_idn_coref_num += 1
@@ -202,6 +196,4 @@ if __name__ == "__main__":
                 role_id_prec * 100.0, role_id_rec * 100.0, role_id_f * 100.0
             )
         )
-        print(
-            "Coref Role: P: {:.2f}, R: {:.2f}, F: {:.2f}".format(role_prec * 100.0, role_rec * 100.0, role_f * 100.0)
-        )
+        print("Coref Role: P: {:.2f}, R: {:.2f}, F: {:.2f}".format(role_prec * 100.0, role_rec * 100.0, role_f * 100.0))
