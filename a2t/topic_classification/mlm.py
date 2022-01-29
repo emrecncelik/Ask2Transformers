@@ -17,7 +17,9 @@ class MLMTopicClassifier(Classifier):
         *args,
         pretrained_model: str = "roberta-large",
         use_cuda=True,
+        query_phrase='Topic of this sentence is {}',
         half=False,
+        query_first=False,
         **kwargs,
     ):
         super().__init__(
@@ -32,6 +34,8 @@ class MLMTopicClassifier(Classifier):
         self.topics2id = torch.tensor(
             [self.tokenizer.encode(topic, add_special_tokens=False)[0] for topic in labels]
         ).to(self.device)
+        self.query_phrase = query_phrase
+        self.query_first = query_first
 
     def _initialize(self, pretrained_model):
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model)
@@ -65,13 +69,16 @@ class MLMTopicClassifier(Classifier):
 
         batch, outputs = [], []
         for i, context in tqdm(enumerate(contexts), total=len(contexts)):
-            sentences = [
-                f"Context: {context.replace(':', ' ')} Topic: {' '.join([self.tokenizer.mask_token] * self.topics2mask[topic])} "
-                for topic in self.labels
-            ]
+            query_phrases = [
+                self.query_phrase.format(' '.join([self.tokenizer.mask_token] * self.topics2mask[topic]))
+                for topic in self.labels]
+
+            if not self.query_first:
+                sentences = [f"{context} {phrase}" for phrase in query_phrases]
+            else:
+                sentences = [f"{phrase} {context}" for phrase in query_phrases]
 
             batch.extend(sentences)
-
             if (i + 1) % batch_size == 0:
                 output = self._run_batch(batch)
                 outputs.append(output)
