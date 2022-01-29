@@ -22,6 +22,7 @@ class _NLITopicClassifier(Classifier):
         entailment_position=2,
         half=False,
         verbose=True,
+        query_first=False,
         **kwargs,
     ):
         super().__init__(
@@ -33,6 +34,7 @@ class _NLITopicClassifier(Classifier):
         )
         self.query_phrase = query_phrase
         self.ent_pos = entailment_position
+        self.query_first = query_first
 
         def idx2topic(idx):
             return self.labels[idx]
@@ -58,9 +60,13 @@ class _NLITopicClassifier(Classifier):
 
         batch, outputs = [], []
         for i, context in tqdm(enumerate(contexts), total=len(contexts)):
-            sentences = [f"{context} {self.tokenizer.sep_token} {self.query_phrase} {topic}." for topic in self.labels]
+            query_phrases = [self.query_phrase.format(topic) for topic in self.labels]
+            if not self.query_first:
+                sentences = [f"{context} {self.tokenizer.sep_token} {phrase}" for phrase in query_phrases]
+            else:
+                sentences = [f"{phrase} {self.tokenizer.sep_token} {context}" for phrase in query_phrases]
+            
             batch.extend(sentences)
-
             if (i + 1) % batch_size == 0:
                 output = self._run_batch(batch)
                 outputs.append(output)

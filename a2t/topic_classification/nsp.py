@@ -20,6 +20,7 @@ class NSPTopicClassifier(Classifier):
         query_phrase="Topic or domain about",
         positive_position=1,
         half=False,
+        query_first=False,
         **kwargs,
     ):
         super().__init__(
@@ -32,6 +33,7 @@ class NSPTopicClassifier(Classifier):
         )
         self.query_phrase = query_phrase
         self.cls_pos = positive_position
+        self.query_first = query_first
 
     def _initialize(self, pretrained_model):
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model, use_fast=True)
@@ -52,11 +54,13 @@ class NSPTopicClassifier(Classifier):
 
         batch, outputs = [], []
         for i, context in tqdm(enumerate(contexts), total=len(contexts)):
-            sentences = [
-                f'{context} {self.tokenizer.sep_token} {self.query_phrase} "{topic}".' for topic in self.labels
-            ]
-            batch.extend(sentences)
+            query_phrases = [self.query_phrase.format(topic) for topic in self.labels]
+            if not self.query_first:
+                sentences = [f"{context} {self.tokenizer.sep_token} {phrase}" for phrase in query_phrases]
+            else:
+                sentences = [f"{phrase} {self.tokenizer.sep_token} {context}" for phrase in query_phrases]
 
+            batch.extend(sentences)
             if (i + 1) % batch_size == 0:
                 output = self._run_batch(batch)
                 outputs.append(output)
